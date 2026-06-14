@@ -1,1 +1,29 @@
-scripts/__pycache__/
+# Cache & data
+cache/
+data/
+tmp/
+logs/
+*.db
+*.db-wal
+*.db-shm
+*.json
+*.tmp
+
+# Backup files
+*.orig
+*.rej
+*.bak
+*~
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Shell
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

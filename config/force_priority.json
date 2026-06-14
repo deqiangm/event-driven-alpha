@@ -1,0 +1,27 @@
+{
+  "version": "1.2-batch2",
+  "description": "ESAD Force Priority Matrix — C1 conflict arbitration order by historical win rate",
+  "conflict_penalty": {
+    "adjacent_opposing": 0.05,
+    "distant_opposing": 0.03,
+    "note": "Penalty applied to lower-rank force confidence only"
+  },
+  "rules": {
+    "rule1_priority_wins": "Higher priority rank force wins direction when forces oppose",
+    "rule2_adjacent_tiebreak": "Adjacent-rank opposing forces (Δrank≤1): stronger confidence wins, unless loser confidence ≥ override_power → override allowed",
+    "rule3_absolute_override": "Force with override_power ≥ 1.0 can override any lower-rank force regardless of confidence"
+  },
+  "forces": [
+    {"priority_rank": 1,  "force_code": "F6",  "force_name": "index_rebalancing",          "override_power": 1.0, "typical_confidence": 0.75, "confidence_range": [0.7, 0.85], "source_tag_pattern": "index_event:*"},
+    {"priority_rank": 2,  "force_code": "F1",  "force_name": "ipo_underwriter_stabilization","override_power": 0.95,"typical_confidence": 0.75, "confidence_range": [0.7, 0.85], "source_tag_pattern": "ipo:*"},
+    {"priority_rank": 3,  "force_code": "F4",  "force_name": "short_squeeze_setup",         "override_power": 0.9, "typical_confidence": 0.57, "confidence_range": [0.5, 0.8],  "source_tag_pattern": "squeeze:*"},
+    {"priority_rank": 4,  "force_code": "F7",  "force_name": "lockup_expiration",            "override_power": 0.85,"typical_confidence": 0.65, "confidence_range": [0.6, 0.7],  "source_tag_pattern": "lockup:*"},
+    {"priority_rank": 5,  "force_code": "F2",  "force_name": "gamma_dealer_hedging",         "override_power": 0.8, "typical_confidence": 0.60, "confidence_range": [0.55,0.65],"source_tag_pattern": "opex:*"},
+    {"priority_rank": 6,  "force_code": "F3",  "force_name": "quarter_end_window_dressing",  "override_power": 0.7, "typical_confidence": 0.60, "confidence_range": [0.55,0.65],"source_tag_pattern": "quarter_end:*"},
+    {"priority_rank": 7,  "force_code": "F5b", "force_name": "fed_balance_sheet_qt_qe",      "override_power": 0.65,"typical_confidence": 0.60, "confidence_range": [0.5, 0.75],"source_tag_pattern": "fomc_bs:*"},
+    {"priority_rank": 8,  "force_code": "F5a", "force_name": "fomc_vol_compression_expansion","override_power": 0.55,"typical_confidence": 0.58, "confidence_range": [0.55,0.6], "source_tag_pattern": "fomc:*"},
+    {"priority_rank": 8,  "force_code": "F8",  "force_name": "etf_fund_flow_momentum",        "override_power": 0.65,"typical_confidence": 0.55, "confidence_range": [0.45,0.75],"source_tag_pattern": "etf_flow:*"},
+    {"priority_rank": 9,  "force_code": "F9",  "force_name": "vix_roll_yield_window",         "override_power": 0.45,"typical_confidence": 0.52, "confidence_range": [0.45,0.75],"source_tag_pattern": "vix_regime:*"},
+    {"priority_rank": 10, "force_code": "F5c", "force_name": "forward_guidance_direction",     "override_power": 0.4, "typical_confidence": 0.48, "confidence_range": [0.4, 0.65],"source_tag_pattern": "fomc_guidance:*"}
+  ]
+}

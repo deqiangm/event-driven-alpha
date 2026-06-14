@@ -19,18 +19,18 @@
 
 ---
 
-## Batch 2: Force System Completion ⬜ PENDING
+## Batch 2: Force System Completion ✅ COMPLETE
 
 ### Force Expansion
-- [ ] A1 Add Force 8: ETF Fund Flow Momentum
-- [ ] A2 Add Force 9: VIX Roll Yield Window
-- [ ] A3 Split & Expand FOMC Force (sub-forces: Vol Compression + Fed Balance Sheet + Forward Guidance)
+- [x] A1 Add Force 8: ETF Fund Flow Momentum
+- [x] A2 Add Force 9: VIX Roll Yield Window
+- [x] A3 Split & Expand FOMC Force (sub-forces: Vol Compression + Fed Balance Sheet + Forward Guidance)
 
 ### Architecture Fixes
-- [ ] C1 Force Conflict Arbitration — priority matrix when forces oppose
-- [ ] C2 Event-Signal DB linkage — foreign key or mapping table
-- [ ] C3 Confluence Boost fix — decorrelate same-event-derived forces
-- [ ] C4 Squeeze confidence threshold — raise minimum gate or tighten conditions
+- [x] C1 Force Conflict Arbitration — priority matrix when forces oppose
+- [x] C2 Event-Signal DB linkage — foreign key or mapping table (design: docs/BATCH2_DB_LINKAGE.md ✅)
+- [x] C3 Confluence Boost fix — decorrelate same-event-derived forces
+- [x] C4 Squeeze confidence threshold — raise minimum gate or tighten conditions
 
 ---
 

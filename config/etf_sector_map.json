@@ -1,0 +1,29 @@
+{
+  "version": "1.0-batch2",
+  "description": "ETF→Sector mapping for F8 ETF Fund Flow Momentum force. Maps fund tickers to ESAD sector codes for flow aggregation.",
+  "source_priority": ["ishares_api", "etf_com"],
+  "sectors": {
+    "XLK": {"sector_name": "Technology",        "etf_tickers": ["XLK", "VGT", "IYW", "QQQ"],  "weight": 1.0},
+    "XLF": {"sector_name": "Financials",        "etf_tickers": ["XLF", "VFH", "IYF"],         "weight": 1.0},
+    "XLE": {"sector_name": "Energy",            "etf_tickers": ["XLE", "VDE", "IYE"],         "weight": 1.0},
+    "XLV": {"sector_name": "Healthcare",        "etf_tickers": ["XLV", "VHT", "IYH", "XBI"],   "weight": 1.0},
+    "XLI": {"sector_name": "Industrials",       "etf_tickers": ["XLI", "VIS", "IYJ"],         "weight": 1.0},
+    "XLY": {"sector_name": "Consumer Discretionary","etf_tickers": ["XLY", "VCR", "IYK"],     "weight": 1.0},
+    "XLP": {"sector_name": "Consumer Staples",  "etf_tickers": ["XLP", "VDC", "IYK"],         "weight": 1.0},
+    "XLU": {"sector_name": "Utilities",         "etf_tickers": ["XLU", "VPU", "IDU"],         "weight": 1.0},
+    "XLB": {"sector_name": "Materials",         "etf_tickers": ["XLB", "VAW", "IYM"],         "weight": 1.0},
+    "XRE": {"sector_name": "RealEstate",        "etf_tickers": ["XLRE", "VNQ", "IYR"],        "weight": 1.0},
+    "XLC": {"sector_name": "Communication",     "etf_tickers": ["XLC", "VOX", "IYZ"],        "weight": 1.0}
+  },
+  "holdings_overlap": {
+    "note": "QQQ has heavy XLK overlap; do NOT double-count QQQ flow as both sector+tech. Use QQQ as a macro confirmation signal only.",
+    "QQQ": "treat_as_macro_proxy_only"
+  },
+  "flow_thresholds": {
+    "single_etf_1d_significant": 500000000,
+    "single_etf_1d_large":       1000000000,
+    "sector_aggregate_5d_trend": 2000000000,
+    "unit": "USD",
+    "note": "Flows above significant threshold trigger F8 force computation. Large threshold adds +0.10 confidence boost."
+  }
+}
