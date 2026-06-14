@@ -140,11 +140,17 @@ elif dovish_n > hawkish_n + 1:
     shift_direction = 'dovish'
 
 if shift_direction == 'neutral':
+    # Neutral still provides signal value (no FOMC shock) with baseline confidence
+    base_conf = 0.15
+    # Add confidence based on data availability and quality
+    if implied > 0: base_conf += 0.05  # Valid FedWatch data
+    if abs(cot.get('zscore', 0)) > 0.5: base_conf += 0.03  # COT data available
+    confidence = min(base_conf, 0.25)
     print(json.dumps({'date': '$TODAY_ISO', 'force_code': 'F5c', 'force_name': 'forward_guidance_direction',
         'shift_direction': 'neutral', 'guidance_gap_bps': 0,
         'language_shift': f'hawkish_added={hawkish_n},dovish_added={dovish_n}',
         'implied_rate_pct': implied, 'cot_zscore': cot.get('zscore', 0),
-        'direction': 'NEUTRAL', 'confidence': 0.0, 'source_tag': 'fomc_guidance:$TODAY'}))
+        'direction': 'NEUTRAL', 'confidence': round(confidence, 3), 'source_tag': 'fomc_guidance:$TODAY'}))
     sys.exit(0)
 
 confidence = 0.40
