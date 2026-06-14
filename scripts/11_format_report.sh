@@ -17,7 +17,7 @@ REPORT_FILE="${DATA_DIR}/esad_report_${REPORT_DATE}.txt"
 esad_log "Formatting ESAD report for ${REPORT_DATE}"
 
 # Export variables for Python
-export REPORT_DATE SIGNAL_ID SIGNALS_DB FORCES_FILE REPORT_FILE
+export REPORT_DATE SIGNAL_ID SIGNALS_DB FORCES_FILE REPORT_FILE OUTPUT_JSON
 
 # ── Format report ──
 python3 << 'PYEOF'
@@ -29,7 +29,7 @@ signal_id = os.environ.get('SIGNAL_ID', '')
 signals_db = os.environ.get('SIGNALS_DB', '')
 forces_file = os.environ.get('FORCES_FILE', '')
 report_file = os.environ.get('REPORT_FILE', '')
-output_json = "${OUTPUT_JSON}"
+output_json = os.environ.get('OUTPUT_JSON', '')
 
 # ── Fetch signal from DB ──
 conn = sqlite3.connect(signals_db)
@@ -72,12 +72,100 @@ signal = {
     "design_version": row[18]
 }
 
-# ── Load forces summary ──
+# ── Load forces summary and details ──
 forces = []
+force_details = {}
 if os.path.exists(forces_file):
     with open(forces_file) as f:
         data = json.load(f)
         forces = data.get('forces_summary', [])
+        # Get detailed force data for P2.7 GEX map
+        active_forces = data.get('active_forces_data', [])
+        for af in active_forces:
+            code = af.get('force_code', '')
+            if code and 'details' in af:
+                force_details[code] = af['details']
+
+# ── GEX Map Visualization Helper (P2.7) ──
+def build_gex_ascii_map(gex_details):
+    """Build ASCII visualization of strike-level gamma exposure."""
+    if not gex_details:
+        return []
+    
+    gex_map = gex_details.get('gex_map', {})
+    strikes_raw = gex_map.get('strikes_near_spot', [])
+    if not strikes_raw:
+        return ["  (GEX map data unavailable)"]
+    
+    lines = []
+    lines.append("  ── GEX MAP (Gamma by Strike) ──")
+    
+    # Convert to dict format
+    strikes = [{'strike': s[0], 'net_gamma': s[1]} for s in strikes_raw]
+    
+    # Sort strikes
+    strikes_sorted = sorted(strikes, key=lambda x: float(x.get('strike', 0)))
+    if not strikes_sorted:
+        return ["  (No GEX map strikes available)"]
+    
+    # Normalize for bar chart
+    gex_values = [abs(float(s.get('net_gamma', 0))) for s in strikes_sorted]
+    max_gex = max(gex_values) if gex_values else 1
+    
+    spot_price = float(gex_details.get('spot', 0))
+    zero_gamma = float(gex_details.get('zero_gamma', 0))
+    
+    for strike_data in strikes_sorted:
+        strike = float(strike_data.get('strike', 0))
+        net_gamma = float(strike_data.get('net_gamma', 0))
+        
+        # Bar width: up to 20 chars
+        bar_width = int(abs(net_gamma) / max_gex * 20) if max_gex > 0 else 0
+        
+        # Call side (positive gamma) = green, Put side (negative gamma) = red
+        bar_char = '█' if net_gamma > 0 else '░'
+        bar = bar_char * bar_width
+        
+        # Mark spot price
+        spot_marker = '◄ SPOT' if abs(strike - spot_price) < 1.0 else ''
+        zg_marker = '◄ ZG' if abs(strike - zero_gamma) < 1.0 else ''
+        
+        side = 'CALL' if net_gamma > 0 else 'PUT '
+        lines.append(f"  {strike:.1f} | {side} | {bar:<20} | ${abs(net_gamma):.2f}M {spot_marker}{zg_marker}")
+    
+    # Add key gamma levels
+    lines.append("")
+    lines.append(f"  Zero Gamma Level: ${zero_gamma:.2f}")
+    lines.append(f"  Spot Price:       ${spot_price:.2f}")
+    lines.append(f"  Distance to ZG:   {gex_details.get('distance_to_zg_pct', 0):.2%}")
+    lines.append(f"  Regime:           {gex_details.get('gex_regime', 'UNKNOWN')}")
+    lines.append(f"  Call/Put Ratio:   {gex_map.get('call_put_ratio', 0):.2f}")
+    
+    return lines
+
+# ── OpEx Info Helper (P2.6) ──
+def build_opex_info(opex_details):
+    """Build OpEx calendar signal info section."""
+    if not opex_details:
+        return []
+    
+    lines = []
+    lines.append("  ── OPEX CALENDAR SIGNAL ──")
+    
+    days_until = opex_details.get('days_until_opex', '?')
+    opex_type = opex_details.get('opex_type', '?')
+    next_date = opex_details.get('next_opex_date', '?')
+    
+    regime = opex_details.get('opex_regime', '?')
+    pin_strength = opex_details.get('pinning_strength', 0)
+    vol_prob = opex_details.get('volatility_explosion_prob', 0)
+    
+    lines.append(f"  Next OpEx: {next_date} ({days_until} days, {opex_type})")
+    lines.append(f"  Regime:    {regime}")
+    lines.append(f"  Pinning:   {pin_strength:.0%}")
+    lines.append(f"  Vol Expl:  {vol_prob:.0%}")
+    
+    return lines
 
 # ── If --json requested ──
 if output_json == "--json":
@@ -137,6 +225,20 @@ if forces:
 else:
     report_lines.append("  (No active structural forces)")
 report_lines.append("")
+
+# ── GEX Map Section (P2.7) ──
+if 'F2' in force_details:
+    gex_lines = build_gex_ascii_map(force_details['F2'])
+    for line in gex_lines:
+        report_lines.append(line)
+    report_lines.append("")
+
+# ── OpEx Calendar Section (P2.6) ──
+if 'F2b' in force_details:
+    opex_lines = build_opex_info(force_details['F2b'])
+    for line in opex_lines:
+        report_lines.append(line)
+    report_lines.append("")
 
 report_lines.append("  ── TRADE PARAMETERS ──")
 report_lines.append(f"  Instrument:    {signal['entry_instrument']}")

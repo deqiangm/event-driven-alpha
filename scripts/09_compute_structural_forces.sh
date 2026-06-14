@@ -30,6 +30,7 @@ if not cache_dir:
 force_patterns = {
     'F1': 'ipo_underwriter_*',
     'F2': 'gamma_dealer_*',
+    'F2b': 'opex_force_*',
     'F3': 'quarter_end_*',
     'F4': 'short_squeeze_*',
     'F5a': 'fomc_vol_*',
@@ -55,14 +56,21 @@ for fcode, pattern in force_patterns.items():
                 direction = data.get('direction', 'NEUTRAL')
                 source_tag = data.get('source_tag', f'{fcode.lower()}:{today}')
                 force_name = data.get('force_name', fcode)
-                active_forces.append({
+                force_entry = {
                     'force_code': fcode,
                     'force_name': force_name,
                     'direction': direction,
                     'confidence': confidence,
                     'source_tag': source_tag,
                     'raw_data_file': os.path.basename(matches[-1])
-                })
+                }
+                # Pass through details for GEX map visualization (P2.7)
+                if fcode == 'F2' and 'details' in data:
+                    force_entry['details'] = data.get('details', {})
+                # Pass through OpEx details
+                if fcode == 'F2b' and 'details' in data:
+                    force_entry['details'] = data.get('details', {})
+                active_forces.append(force_entry)
         except Exception as e:
             pass
 
@@ -304,6 +312,7 @@ result = {
          'src': f.get('source_tag', ''), 'penalty': f.get('conflict_penalty', 0)}
         for f in forces if f.get('confidence', 0) > 0
     ],
+    'active_forces_data': forces,  # Full force data for report visualization (P2.7)
     'pipeline': 'Force->C1(conflict)->C3(confluence)->C4(gate)',
     'gate_applied': True,
     'min_gate': MIN_GATE

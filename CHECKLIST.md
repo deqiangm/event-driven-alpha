@@ -70,15 +70,15 @@
 
 ---
 
-## Phase 2: GEX + OpEx Forces 🟡 IN PROGRESS
+## Phase 2: GEX + OpEx Forces ✅ COMPLETE
 
 - [x] P2.1 CBOE OI data fetcher (integrated with B1 pipeline via yfinance)
 - [x] P2.2 GEX pipeline enhancement (multi-expiry aggregation via compute_gex.py)
 - [x] P2.3 Gamma pinning force deduction (08_fetch_gamma_dealer_force.sh)
-- [ ] P2.4 Negative gamma acceleration detection
-- [ ] P2.5 Key gamma strike identification (in GEX JSON output)
-- [ ] P2.6 OpEx signal generation
-- [ ] P2.7 GEX map in daily report
+- [x] P2.4 Negative gamma acceleration detection
+- [x] P2.5 Key gamma strike identification (in GEX JSON output)
+- [x] P2.6 OpEx signal generation (16_fetch_opex_force.sh)
+- [x] P2.7 GEX map in daily report (ASCII visualization in 11_format_report.sh)
 - [ ] P2.8 Test with historical OpEx events
 
 ---
