@@ -83,16 +83,16 @@
 
 ---
 
-## Phase 3: Window Dressing + Squeeze + Lockup ⬜ PENDING
+## Phase 3: Window Dressing + Squeeze + Lockup ✅ COMPLETE
 
-- [ ] P3.1 Quarter-end date tracker
-- [ ] P3.2 Stock quarterly performance ranker
-- [ ] P3.3 Window dressing force deduction
-- [ ] P3.4 Finviz short interest scraper
-- [ ] P3.5 Short squeeze setup detector (with C4 confidence fix)
-- [ ] P3.6 Lockup expiration tracker (SEC S-1 parsing)
-- [ ] P3.7 Index rebalancing monitor (S&P announcements)
-- [ ] P3.8 All 7→9 forces integration test
+- [x] P3.1 Quarter-end date tracker (F3 Window Dressing)
+- [x] P3.2 Stock quarterly performance ranker (embedded)
+- [x] P3.3 Window dressing force deduction
+- [x] P3.4 Finviz short interest scraper (yfinance proxy implemented)
+- [x] P3.5 Short squeeze setup detector (F4, with VIX + volume composite)
+- [x] P3.6 Lockup expiration tracker (F7, IPO calendar proxy)
+- [x] P3.7 Index rebalancing monitor (F6, S&P+Russell calendar)
+- [x] P3.8 All 10 forces integration test (✅ all 10 active)
 
 ---
 

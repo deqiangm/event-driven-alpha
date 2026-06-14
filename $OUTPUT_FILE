@@ -1,0 +1,14 @@
+{
+  "date": "2026-06-14",
+  "force_code": "F7",
+  "force_name": "Lockup Expiry",
+  "direction": "NEUTRAL",
+  "confidence": 0.1,
+  "source_tag": "lockup:20260614",
+  "details": {
+    "upcoming_expiries_count": 0,
+    "expiries_in_window": [],
+    "expiry_regime": "none",
+    "note": "Full SEC S-1 parsing required for precise lockup dates; current is proxy"
+  }
+}
