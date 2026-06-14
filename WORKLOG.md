@@ -117,4 +117,32 @@ All zero_gamma within spot±2 — physically consistent.
 - P1.10-P1.12 Force Deduction: IPO stabilization, FOMC vol compression
 - P1.13-P1.18 Signal Generation + Reporting + Cron
 
+## 2026-06-14: Phase 2 — GEX + OpEx Forces 🟡 IN PROGRESS
+
+### Implementation Summary
+
+1. **Bug Fixes**
+   - Fixed `TODAY_ISO` undefined variable in `esad_common.sh`
+   - Added `esad_init_check()` function for database initialization
+   - Added `esad_dbg()` debug logging function
+
+2. **F2 Gamma Dealer Force** (`08_fetch_gamma_dealer_force.sh`)
+   - Integrated with existing GEX pipeline (`gex_cache.sh`, `compute_gex.py`)
+   - 3 regime detection: negative_gamma / positive_gamma / near_zero_gamma
+   - Confidence calculation based on net GEX magnitude + distance to zero gamma
+   - Negative gamma near zero gamma (0.11%) → BULLISH 75% confidence (breakout expected)
+
+3. **End-to-End Pipeline Test**
+   - REAL market data: SPY spot=741.75, net_gex=-23.46B, zero_gamma=740.94
+   - F2 (GEX): BULLISH 75% + F8 (ETF Flow): BULLISH 57%
+   - Confluence boost (2 sources) = 1.20x
+   - Final confidence = 79.2% → ACTION tier
+   - Report generated successfully with GEX source attribution
+
+### Next: Phase 2 Remaining
+- P2.4 Negative gamma acceleration detection
+- P2.5 Key gamma strike identification
+- P2.6 OpEx calendar signal generation
+- P2.7 GEX visual map in daily report
+
 ---
