@@ -8,7 +8,7 @@ set -euo pipefail
 ESAD_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "${ESAD_ROOT}/lib/esad_common.sh"
 
-FORCE_DATE="${1:-$TODAY_ISO}"
+FORCE_DATE="${1:-$TODAY}"
 PRIORITY_FILE="${CONFIG_DIR}/force_priority.json"
 OUTPUT="${DATA_DIR}/structural_forces_${TODAY}.json"
 export ESAD_CACHE_DIR="${CACHE_DIR}"
@@ -16,7 +16,6 @@ export ESAD_CONFIG_DIR="${CONFIG_DIR}"
 export TODAY
 
 esad_log "C1/C3/C4: Computing structural forces pipeline for ${FORCE_DATE}"
-esad_init_check
 
 # ── Step 1: Collect all per-force outputs ──
 collect_forces() {
@@ -45,7 +44,8 @@ force_patterns = {
 active_forces = []
 for fcode, pattern in force_patterns.items():
     matches = glob.glob(os.path.join(cache_dir, pattern + '.json'))
-    matches = [m for m in matches if today in os.path.basename(m)]
+    today_nodash = today.replace('-', '')
+    matches = [m for m in matches if today in os.path.basename(m) or today_nodash in os.path.basename(m)]
     if matches:
         try:
             with open(matches[-1]) as f:
@@ -288,7 +288,7 @@ if conflicts:
     signal_id += '_c' + str(len(conflicts))
 
 result = {
-    'date': '$TODAY_ISO',
+    'date': '$TODAY',
     'design_version': '1.2-batch2',
     'signal_id': signal_id,
     'direction': direction,
