@@ -137,7 +137,7 @@ def build_gex_ascii_map(gex_details):
     lines.append("")
     lines.append(f"  Zero Gamma Level: ${zero_gamma:.2f}")
     lines.append(f"  Spot Price:       ${spot_price:.2f}")
-    lines.append(f"  Distance to ZG:   {gex_details.get('distance_to_zg_pct', 0):.2%}")
+    lines.append(f"  Distance to ZG:   {gex_details.get('distance_to_zg_pct', 0) * 100:.2f}%")
     lines.append(f"  Regime:           {gex_details.get('gex_regime', 'UNKNOWN')}")
     lines.append(f"  Call/Put Ratio:   {gex_map.get('call_put_ratio', 0):.2f}")
     
@@ -186,7 +186,9 @@ tier = signal['tier']
 
 dir_emoji = {
     'BULLISH': '🟢',
+    'MILDLY_BULLISH': '🟡',
     'BEARISH': '🔴',
+    'MILDLY_BEARISH': '🟠',
     'NEUTRAL': '⚪'
 }.get(direction, '⚪')
 
@@ -220,7 +222,7 @@ report_lines.append("  ── ACTIVE FORCES ──")
 if forces:
     for f in forces:
         f_dir = f.get('dir', 'NEUTRAL')
-        f_emoji = '🟢' if f_dir == 'BULLISH' else '🔴' if f_dir == 'BEARISH' else '⚪'
+        f_emoji = '🟢' if f_dir == 'BULLISH' else '🟡' if f_dir == 'MILDLY_BULLISH' else '🔴' if f_dir == 'BEARISH' else '🟠' if f_dir == 'MILDLY_BEARISH' else '⚪'
         report_lines.append(f"  {f_emoji} {f.get('code', '?')}: {f.get('src', '')} ({f.get('conf', 0):.0%})")
 else:
     report_lines.append("  (No active structural forces)")

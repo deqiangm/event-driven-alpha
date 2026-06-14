@@ -47,9 +47,23 @@ for fcode, pattern in force_patterns.items():
     matches = glob.glob(os.path.join(cache_dir, pattern + '.json'))
     today_nodash = today.replace('-', '')
     matches = [m for m in matches if today in os.path.basename(m) or today_nodash in os.path.basename(m)]
+    # Prefer YYYY-MM-DD format (real data) over YYYYMMDD (test fixtures)
+    # Sort by: has details key (real data > fixture), then by file size desc
     if matches:
+        def _score(m):
+            try:
+                with open(m) as f:
+                    d = json.load(f)
+                has_details = 1 if 'details' in d else 0
+                has_real_tag = 0 if 'fixture' in d.get('source_tag', '') else 1
+                fsize = os.path.getsize(m)
+                return (has_real_tag, has_details, fsize)
+            except:
+                return (0, 0, 0)
+        matches.sort(key=_score, reverse=True)
+        best_match = matches[0]
         try:
-            with open(matches[-1]) as f:
+            with open(best_match) as f:
                 data = json.load(f)
             confidence = float(data.get('confidence', 0))
             if confidence > 0:
@@ -62,7 +76,7 @@ for fcode, pattern in force_patterns.items():
                     'direction': direction,
                     'confidence': confidence,
                     'source_tag': source_tag,
-                    'raw_data_file': os.path.basename(matches[-1])
+                    'raw_data_file': os.path.basename(best_match)
                 }
                 # Pass through details for GEX map visualization (P2.7)
                 if fcode == 'F2' and 'details' in data:
